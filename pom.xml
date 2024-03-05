@@ -41,8 +41,7 @@
 
   <scm>
     <connection>scm:git:https://github.com/idirze/okdp-spark-auth-filter.git</connection>
-    <developerConnection>scm:git:git@github.com:idirze/okdp-spark-auth-filter.git
-    </developerConnection>
+    <developerConnection>scm:git:https://github.com/idirze/okdp-spark-auth-filter.git</developerConnection>
     <url>https://github.com/idirze/okdp-spark-auth-filter.git</url>
   </scm>
 
