@@ -397,7 +397,7 @@
           <tokenAuth>true</tokenAuth>
           <failOnBuildFailure>true</failOnBuildFailure>
           <checksums>required</checksums>
-          <autoPublish>true</autoPublish>
+          <autoPublish>false</autoPublish>
           <skipPublishing>false</skipPublishing>
         </configuration>
       </plugin>
