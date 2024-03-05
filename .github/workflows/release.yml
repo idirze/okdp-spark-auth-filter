@@ -27,6 +27,9 @@ jobs:
     steps:
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
 
       - name: Retrieve release metadata 📦
         id: release
@@ -49,15 +52,14 @@ jobs:
 
       - name: Configure git
         run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
+          git config --list
 
       - name: Maven release (${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }}) 📤
         run: |
           mvn  -ntp --batch-mode release:clean release:prepare \
              -DreleaseVersion=${{ fromJSON(steps.release.outputs.result).current-version }} \
              -DdevelopmentVersion=${{ fromJSON(steps.release.outputs.result).next-version }} \
-             -Darguments="-Dusername=actions -Dpassword=${GITHUB_TOKEN} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
+             -Darguments="-Dusername={{ github.actor }} -Dpassword=${GITHUB_TOKEN} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
