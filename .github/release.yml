@@ -1,0 +1,5 @@
+# https://github.com/radcortez/project-metadata-action
+name: okdp-spark-auth-filter
+release:
+  current-version: 0.0.2-RC1
+  next-version: 0.0.3-SNAPSHOT
