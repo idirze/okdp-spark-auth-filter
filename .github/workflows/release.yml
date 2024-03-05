@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
+
+      - name: Configure git 📦
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
@@ -50,16 +52,12 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Configure git
-        run: |
-          git config --list
-
       - name: Maven release (${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }}) 📤
         run: |
           mvn  -ntp --batch-mode release:clean release:prepare \
              -DreleaseVersion=${{ fromJSON(steps.release.outputs.result).current-version }} \
              -DdevelopmentVersion=${{ fromJSON(steps.release.outputs.result).next-version }} \
-             -Darguments="-Dusername={{ github.actor }} -Dpassword=${GITHUB_TOKEN} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
+             -Dusername=actions -Dpassword=${GITHUB_TOKEN} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
