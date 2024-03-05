@@ -49,15 +49,15 @@ jobs:
 
       - name: Configure git
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
 
       - name: Maven release (${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }}) 📤
         run: |
           mvn  -ntp --batch-mode release:clean release:prepare \
              -DreleaseVersion=${{ fromJSON(steps.release.outputs.result).current-version }} \
              -DdevelopmentVersion=${{ fromJSON(steps.release.outputs.result).next-version }} \
-             -Dusername=action@github.com -Dpassword=${GITHUB_TOKEN} \
+             -Dusername=actions -Dpassword=${GITHUB_TOKEN} \
              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
