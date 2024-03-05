@@ -41,8 +41,10 @@
 
   <scm>
     <connection>scm:git:git@github.com:idirze/okdp-spark-auth-filter.git</connection>
-    <developerConnection>scm:git:git@github.com:idirze/okdp-spark-auth-filter.git</developerConnection>
-    <url>scm:git:git@github.com:idirze/okdp-spark-auth-filter.git</url>
+    <developerConnection>scm:git:git@github.com:idirze/okdp-spark-auth-filter.git
+    </developerConnection>
+    <url>https://github.com/idirze/okdp-spark-auth-filter.git</url>
+    <tag>HEAD</tag>
   </scm>
 
   <organization>
@@ -275,7 +277,6 @@
             <localCheckout>true</localCheckout>
             <remoteTagging>true</remoteTagging>
             <pushChanges>true</pushChanges>
-            <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
             <goals>deploy</goals>
           </configuration>
         </plugin>
