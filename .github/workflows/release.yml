@@ -52,6 +52,15 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
+      - name: test
+        run: |
+          echo "Test" >> README.md
+          git add .
+          git commit -m"<update readme"
+          git push -u origin main
+          
+          
+
       - name: Maven release (${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }}) 📤
         run: |
           mvn  -ntp --batch-mode release:clean release:prepare \
