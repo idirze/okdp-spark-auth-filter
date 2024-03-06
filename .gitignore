@@ -31,6 +31,8 @@ bin/
 ### maven ###
 target/
 dependency-reduced-pom.xml
+release.properties
+pom.xml.releaseBackup
 
 ### Others
 tmp/
