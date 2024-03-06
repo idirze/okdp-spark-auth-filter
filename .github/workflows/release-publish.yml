@@ -24,7 +24,7 @@ defaults:
 jobs:
   publish-release:
     runs-on: ubuntu-latest
-    if: ${{ github.event.label.name == 'maven-release' }}
+    if: github.event.label.name == 'maven-release' && github.repository_owner == 'idirze'
     steps:
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
