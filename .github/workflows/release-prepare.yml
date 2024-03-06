@@ -1,4 +1,4 @@
-name: Release [Prepare]
+name: Release [prepare]
 
 on:
   push:
@@ -20,7 +20,7 @@ defaults:
     shell: bash
 
 jobs:
-  release:
+  prepare-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo ⚡️
@@ -68,14 +68,14 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push maven release branch ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
+      - name: Create maven release branch ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
         uses: ad-m/github-push-action@v0.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: v${{ fromJSON(steps.release.outputs.result).next-version }}
           force: true
 
-      - name: Push maven release tag ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
+      - name: Create maven release tag ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
         uses: ad-m/github-push-action@v0.8.0
         with:
           branch: v${{ fromJSON(steps.release.outputs.result).next-version }}
@@ -87,6 +87,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+          base: main
           branch: v${{ fromJSON(steps.release.outputs.result).next-version }}
           delete-branch: true
           title: '[maven-release-plugin] Maven release'

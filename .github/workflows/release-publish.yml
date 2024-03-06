@@ -1,4 +1,4 @@
-name: Release [Perform]
+name: Release [publish]
 
 on:
   pull_request:
@@ -22,7 +22,7 @@ defaults:
     shell: bash
 
 jobs:
-  release:
+  publish-release:
     runs-on: ubuntu-latest
     if: ${{ github.event.label.name == 'maven-release' }}
     steps:
