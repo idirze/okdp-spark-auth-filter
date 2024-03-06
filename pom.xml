@@ -19,7 +19,7 @@
 
   <groupId>io.github.idirze</groupId>
   <artifactId>kdp-spark-auth-filter</artifactId>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.4-SNAPSHOT</version>
   <!-- <groupId>io.okdp</groupId>-->
   <!-- <artifactId>okdp-spark-auth-filter</artifactId>-->
   <!--<version>1.0.0</version>-->
@@ -267,7 +267,6 @@
           <artifactId>maven-release-plugin</artifactId>
           <version>${maven-release-plugin.version}</version>
           <configuration>
-            <branchName>v@{project.version}</branchName>
             <tagNameFormat>v@{project.version}</tagNameFormat>
             <updateWorkingCopyVersions>true</updateWorkingCopyVersions>
             <autoVersionSubmodules>true</autoVersionSubmodules>
