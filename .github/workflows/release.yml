@@ -54,7 +54,7 @@ jobs:
 
       - name: Maven release (${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }}) 📤
         run: |
-          mvn  -ntp --batch-mode release:clean release:prepare \
+          mvn  -ntp --batch-mode release:clean release:prepare release:perform \
              -DreleaseVersion=${{ fromJSON(steps.release.outputs.result).current-version }} \
              -DdevelopmentVersion=${{ fromJSON(steps.release.outputs.result).next-version }} \
              -Darguments='-Dpassword=${GIT_TOKEN}'
