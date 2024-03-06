@@ -65,6 +65,8 @@ jobs:
       # Increase the pom project version to 'next-version'
       # Commit the changes
       # Build and deploy the release from the local tag
+      - name: test
+        run: git branch --show-current
       - name: Maven release prepare ${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }} 📤
         run: |
           mvn -ntp --batch-mode release:clean release:prepare \
@@ -77,22 +79,22 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create maven release branch ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
-        uses: ad-m/github-push-action@v0.8.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ steps.branch.outputs.current_branch }}
-          force: false
-          force_with_lease: false
-
-      - name: Create maven release tag ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
-        uses: ad-m/github-push-action@v0.8.0
-        with:
-          branch: ${{ steps.branch.outputs.current_branch }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          tags: true
-          force: false
-          force_with_lease: false
+  #  - name: Create maven release branch ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
+  #    uses: ad-m/github-push-action@v0.8.0
+  #    with:
+  #      github_token: ${{ secrets.GITHUB_TOKEN }}
+  #      branch: ${{ steps.branch.outputs.current_branch }}
+  #      force: false
+  #      force_with_lease: false
+  #
+  #  - name: Create maven release tag ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
+  #    uses: ad-m/github-push-action@v0.8.0
+  #    with:
+  #      branch: ${{ steps.branch.outputs.current_branch }}
+  #      github_token: ${{ secrets.GITHUB_TOKEN }}
+  #      tags: true
+  #      force: false
+  #      force_with_lease: false
 
       - name: Create Pull Request for next development iteration 📦
         uses: peter-evans/create-pull-request@v6
