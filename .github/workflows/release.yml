@@ -51,7 +51,13 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Maven release (${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }}) 📤
+      # Change the pom project version to 'current-version'
+      # Run the validations (tests, checkstyle etc.)
+      # Commit (PR: The push is disabled including pushing tags -> pushChanges = false)
+      # Increase the pom project version to 'next-version'
+      # Commit the changes
+      # Build and deploy the release from the local tag
+      - name: Maven release ${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }} 📤
         run: |
           mvn  -ntp --batch-mode release:clean release:prepare release:perform \
              -DreleaseVersion=${{ fromJSON(steps.release.outputs.result).current-version }} \
@@ -63,14 +69,22 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Push maven release tag ${{ fromJSON(steps.release.outputs.result).current-version }}
+        uses: ad-m/github-push-action@v0.8.0
+        with:
+          branch: ${{ github.base_ref }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tags: true
+          force_with_lease: true
+
       - name: Create Pull Request for next development iteration
         uses: peter-evans/create-pull-request@v6
         with:
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          branch: release
+          branch: ${{ github.ref_name }}
           branch-suffix: random
           delete-branch: true
-          title: '[maven-release-plugin] prepare for next development iteration'
+          title: '[maven-release-plugin] prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}'
+          #team-reviewers: reviewers
           labels: |
-            release
-            automated pr
+            automated

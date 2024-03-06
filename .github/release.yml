@@ -1,4 +1,5 @@
 name: okdp-spark-auth-filter
 release:
-  current-version: 0.0.3-RC1
+  current-version: 0.0.3-RC2
   next-version: 0.0.3-SNAPSHOT
+    
