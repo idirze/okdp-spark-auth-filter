@@ -65,8 +65,6 @@ jobs:
       # Increase the pom project version to 'next-version'
       # Commit the changes
       # Build and deploy the release from the local tag
-      - name: test
-        run: git branch --show-current
       - name: Maven release prepare ${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }} 📤
         run: |
           mvn -ntp --batch-mode release:clean release:prepare \
@@ -79,22 +77,4 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create Pull Request for next development iteration 📦
-        uses: peter-evans/create-pull-request@v6
-        with:
-          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          base: main
-          branch: ${{ steps.branch.outputs.current_branch }}
-          branch-suffix: random
-          delete-branch: true
-          title: '[maven-release-plugin] Maven release'
-          body: |
-            Maven release
-            - Prepare release ${{ fromJSON(steps.release.outputs.result).current-version }}
-            - Publish to [Maven central repository][1]
-            - Prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}
-            
-            [1]: https://central.sonatype.com/artifact/io.okdp/okdp-spark-auth-filter/overview
-          #team-reviewers: reviewers
-          labels: |
-            maven-release
+
