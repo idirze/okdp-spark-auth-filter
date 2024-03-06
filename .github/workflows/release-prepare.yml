@@ -78,11 +78,10 @@ jobs:
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Update release.yml
-      - name: Update release file
+      - name: Merge ${{ steps.branch.outputs.current_branch }} into ${{ github.base_ref }}
         run: |
-          echo "#" >> .github/release.yml
-          git add .
-          git commit -m"Update release file"
+         git checkout ${{ github.base_ref }}
+         git merge --commit -no-ff ${{ steps.branch.outputs.current_branch }} 
 
       # Create PR based on the un-pushed commits
       - name: Create Pull Request for next development iteration 📦
