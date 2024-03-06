@@ -274,7 +274,7 @@
             <releaseProfiles>release</releaseProfiles>
             <localCheckout>true</localCheckout>
             <remoteTagging>true</remoteTagging>
-            <pushChanges>false</pushChanges>
+            <pushChanges>true</pushChanges>
             <goals>deploy</goals>
           </configuration>
         </plugin>
