@@ -1,4 +1,4 @@
-name: Perform release
+name: Release [Perform]
 
 on:
   pull_request:
