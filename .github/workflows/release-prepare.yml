@@ -81,7 +81,7 @@ jobs:
       - name: Merge ${{ steps.branch.outputs.current_branch }} into ${{ github.base_ref }}
         run: |
          git checkout ${{ github.base_ref }}
-         git merge --commit -no-ff ${{ steps.branch.outputs.current_branch }} 
+         git merge --commit --no-ff ${{ steps.branch.outputs.current_branch }} 
 
       # Create PR based on the un-pushed commits
       - name: Create Pull Request for next development iteration 📦
