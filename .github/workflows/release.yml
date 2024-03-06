@@ -65,9 +65,10 @@ jobs:
         run: |
           mvn  -ntp --batch-mode release:clean release:prepare \
              -DreleaseVersion=${{ fromJSON(steps.release.outputs.result).current-version }} \
-             -DdevelopmentVersion=${{ fromJSON(steps.release.outputs.result).next-version }}
+             -DdevelopmentVersion=${{ fromJSON(steps.release.outputs.result).next-version }} \
+             -Darguments='-Dpassword=${GIT_TOKEN}'
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
