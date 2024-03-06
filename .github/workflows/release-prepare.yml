@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Configure git 📦
         run: |
@@ -71,12 +73,21 @@ jobs:
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create maven release branch ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
-        run: |
-          git pull
-          git push origin -u ${{ github.ref_name }}
+        uses: ad-m/github-push-action@v0.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
+          force: false
+          force_with_lease: false
 
       - name: Create maven release tag ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
-        run: git push --tags
+        uses: ad-m/github-push-action@v0.8.0
+        with:
+          branch: ${{ github.head_ref }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tags: true
+          force: false
+          force_with_lease: false
 
       - name: Create Pull Request for next development iteration 📦
         uses: peter-evans/create-pull-request@v6
