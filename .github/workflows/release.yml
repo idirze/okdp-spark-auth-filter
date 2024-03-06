@@ -62,6 +62,7 @@ jobs:
           mvn  -ntp --batch-mode release:clean release:branch release:prepare release:perform \
              -DreleaseVersion=${{ fromJSON(steps.release.outputs.result).current-version }} \
              -DdevelopmentVersion=${{ fromJSON(steps.release.outputs.result).next-version }} \
+             -DbranchName=v${{ fromJSON(steps.release.outputs.result).next-version }} \
              -Darguments='-Dpassword=${GIT_TOKEN}'
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
