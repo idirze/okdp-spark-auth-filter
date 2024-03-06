@@ -56,6 +56,9 @@ jobs:
       # Increase the pom project version to 'next-version'
       # Commit the changes
       # Build and deploy the release from the local tag
+      - name: test1
+        run: git branch
+
       - name: Maven release ${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }} 📤
         run: |
           mvn -ntp --batch-mode release:clean release:prepare \
@@ -67,7 +70,8 @@ jobs:
           CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: test2
+        run: git branch
       - name: Create maven release branch ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
         uses: ad-m/github-push-action@v0.8.0
         with:
