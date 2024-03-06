@@ -89,9 +89,15 @@ jobs:
         with:
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
           branch: v${{ fromJSON(steps.release.outputs.result).next-version }}
-          #branch-suffix: random
           delete-branch: true
-          title: '[maven-release-plugin] prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}'
+          title: '[maven-release-plugin] Maven release'
+          body: |
+            Maven release
+            - Prepare release ${{ fromJSON(steps.release.outputs.result).current-version }}
+            - Publish to [Maven central repository][1]
+            - Prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}
+            
+            [1]: https://central.sonatype.com/artifact/io.okdp/okdp-spark-auth-filter/overview
           #team-reviewers: reviewers
           labels: |
-            automated
+            maven-release
