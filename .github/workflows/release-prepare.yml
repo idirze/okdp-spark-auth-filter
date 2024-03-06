@@ -84,14 +84,14 @@ jobs:
          git merge --commit --no-ff ${{ steps.branch.outputs.current_branch }} 
 
       - name: Test ${{ steps.branch.outputs.current_branch }} into ${{ github.base_ref }}
-        run: echo Test ${{ steps.branch.outputs.current_branch }}
+        run: echo "${{ steps.branch.outputs }}"
 
       # Create PR based on the un-pushed commits
       - name: Create Pull Request for next development iteration 📦
         uses: peter-evans/create-pull-request@v6
         with:
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          #base: main
+          base: release
           #branch: ${{ steps.branch.outputs.current_branch }}
           #branch-suffix: random
           delete-branch: false
