@@ -77,4 +77,32 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Update release.yml
+      - name: Merge ${{ steps.branch.outputs.current_branch }} into ${{ github.base_ref }} 📦
+        run: |
+         git checkout main
+         git merge --commit --no-ff release
 
+      - name: Test ${{ steps.branch.outputs.current_branch }} into ${{ github.base_ref }}
+        run: echo "${{ steps.branch.outputs }}"
+
+      # Create PR based on the un-pushed commits
+      - name: Create Pull Request for next development iteration 📦
+        uses: peter-evans/create-pull-request@v6
+        with:
+          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+          base: main
+          branch: release
+          #branch-suffix: random
+          delete-branch: false
+          title: '[maven-release-plugin] Maven release'
+          body: |
+            Maven release
+            - Prepare release ${{ fromJSON(steps.release.outputs.result).current-version }}
+            - Publish to [Maven central repository][1]
+            - Prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}
+            
+            [1]: https://central.sonatype.com/artifact/io.okdp/okdp-spark-auth-filter/overview
+          #team-reviewers: reviewers
+          labels: |
+            maven-release
