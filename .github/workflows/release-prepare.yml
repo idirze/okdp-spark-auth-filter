@@ -80,8 +80,8 @@ jobs:
       # Update release.yml
       - name: Merge ${{ steps.branch.outputs.current_branch }} into ${{ github.base_ref }} 📦
         run: |
-         git checkout ${{ github.base_ref }}
-         git merge --commit --no-ff ${{ steps.branch.outputs.current_branch }} 
+         git checkout main
+         git merge --commit --no-ff release
 
       - name: Test ${{ steps.branch.outputs.current_branch }} into ${{ github.base_ref }}
         run: echo "${{ steps.branch.outputs }}"
