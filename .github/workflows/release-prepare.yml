@@ -1,10 +1,11 @@
-name: Release
+name: Release [prepare]
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     paths:
       - '.github/release.yml'
+
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -21,7 +22,7 @@ defaults:
     shell: bash
 
 jobs:
-  release:
+  prepare-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo ⚡️
@@ -57,9 +58,9 @@ jobs:
       # Increase the pom project version to 'next-version'
       # Commit the changes
       # Build and deploy the release from the local tag
-      - name: Maven release ${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }} 📤
+      - name: Maven release prepare ${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }} 📤
         run: |
-          mvn  -ntp --batch-mode release:clean release:prepare release:perform \
+          mvn -ntp --batch-mode release:clean release:prepare \
              -DreleaseVersion=${{ fromJSON(steps.release.outputs.result).current-version }} \
              -DdevelopmentVersion=${{ fromJSON(steps.release.outputs.result).next-version }} \
              -Darguments='-Dpassword=${GIT_TOKEN}'
@@ -69,22 +70,29 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push maven release tag ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
-        uses: ad-m/github-push-action@v0.8.0
-        with:
-          branch: ${{ github.base_ref }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          tags: true
-          force_with_lease: true
+      - name: Create maven release branch ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
+        run: |
+          git pull
+          git push origin -u ${{ github.ref_name }}
+
+      - name: Create maven release tag ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
+        run: git push --tags
 
       - name: Create Pull Request for next development iteration 📦
         uses: peter-evans/create-pull-request@v6
         with:
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          branch: v${{ fromJSON(steps.release.outputs.result).next-version }}
-          #branch-suffix: random
-          delete-branch: true
-          title: '[maven-release-plugin] prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}'
+          base: main
+          branch: ${{ github.ref_name }}
+          delete-branch: false
+          title: '[maven-release-plugin] Maven release'
+          body: |
+            Maven release
+            - Prepare release ${{ fromJSON(steps.release.outputs.result).current-version }}
+            - Publish to [Maven central repository][1]
+            - Prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}
+            
+            [1]: https://central.sonatype.com/artifact/io.okdp/okdp-spark-auth-filter/overview
           #team-reviewers: reviewers
           labels: |
-            automated
+            maven-release

@@ -1,0 +1,60 @@
+name: Release [publish]
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+    paths:
+      - '.github/release.yml'
+
+permissions:
+  contents: write
+
+# https://docs.github.com/en/actions/using-jobs/using-concurrency
+concurrency:
+  # Only cancel in-progress jobs or runs for the current workflow - matches against branch & tags
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.label.name == 'maven-release' }}
+    steps:
+      - name: Checkout Repo ⚡️
+        uses: actions/checkout@v4
+
+      - name: Configure git 📦
+        run: |
+          git config --local user.email "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Retrieve release metadata 📦
+        id: release
+        uses: mikefarah/yq@v4.42.1
+        with:
+          cmd: yq -oj e '.release' .github/release.yml
+
+      - name: Set up JDK 11 📦
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+          cache: 'maven'
+          check-latest: true
+          server-id: 'central'
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_TOKEN
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+
+      - name: Deploy to maven central 📤
+        run: |
+          git checkout tags/${{ fromJSON(steps.release.outputs.result).current-version }}
+          mvn clean deploy
+        
