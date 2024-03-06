@@ -77,7 +77,7 @@ jobs:
           tags: true
           force_with_lease: true
 
-      - name: Create Pull Request for next development iteration
+      - name: Create Pull Request for next development iteration (${{ github.ref_name }} -> main)
         uses: peter-evans/create-pull-request@v6
         with:
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
