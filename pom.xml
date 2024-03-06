@@ -273,7 +273,7 @@
             <tagNameFormat>v@{project.version}</tagNameFormat>
             <localCheckout>true</localCheckout>
             <remoteTagging>true</remoteTagging>
-            <pushChanges>true</pushChanges>
+            <pushChanges>false</pushChanges>
             <goals>deploy</goals>
           </configuration>
         </plugin>
