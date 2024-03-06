@@ -77,7 +77,12 @@ jobs:
           tags: true
           force_with_lease: true
 
-      - name: Create Pull Request for next development iteration (${{ github.ref_name }} -> main)
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: Create Pull Request for next development iteration (${{ github.event.pull_request.base.ref }}  -> main)
         uses: peter-evans/create-pull-request@v6
         with:
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
