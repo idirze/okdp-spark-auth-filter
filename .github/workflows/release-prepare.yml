@@ -58,9 +58,6 @@ jobs:
       # Increase the pom project version to 'next-version'
       # Commit the changes
       # Build and deploy the release from the local tag
-      - name: test1
-        run: git branch
-
       - name: Maven release ${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }} 📤
         run: |
           mvn -ntp --batch-mode release:clean release:prepare \
@@ -72,19 +69,18 @@ jobs:
           CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: test2
-        run: git branch
+
       - name: Create maven release branch ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
         uses: ad-m/github-push-action@v0.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: v${{ fromJSON(steps.release.outputs.result).next-version }}
+          branch: ${{ github.ref_name }}
           force: true
 
       - name: Create maven release tag ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
         uses: ad-m/github-push-action@v0.8.0
         with:
-          branch: v${{ fromJSON(steps.release.outputs.result).next-version }}
+          branch: ${{ github.ref_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tags: true
           force_with_lease: true
@@ -94,7 +90,7 @@ jobs:
         with:
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
           base: main
-          branch: v${{ fromJSON(steps.release.outputs.result).next-version }}
+          branch: ${{ github.ref_name }}
           delete-branch: true
           title: '[maven-release-plugin] Maven release'
           body: |
