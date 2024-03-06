@@ -69,7 +69,7 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push maven release tag ${{ fromJSON(steps.release.outputs.result).current-version }}
+      - name: Push maven release tag ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
         uses: ad-m/github-push-action@v0.8.0
         with:
           branch: ${{ github.base_ref }}
@@ -77,17 +77,12 @@ jobs:
           tags: true
           force_with_lease: true
 
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-
-      - name: Create Pull Request for next development iteration (${{ github.event.pull_request.base.ref }}  -> main)
+      - name: Create Pull Request for next development iteration 📦
         uses: peter-evans/create-pull-request@v6
         with:
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          branch: ${{ github.ref_name }}
-          branch-suffix: random
+          branch: v${{ fromJSON(steps.release.outputs.result).next-version }}
+          #branch-suffix: random
           delete-branch: true
           title: '[maven-release-plugin] prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}'
           #team-reviewers: reviewers
