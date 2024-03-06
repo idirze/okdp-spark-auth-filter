@@ -27,6 +27,11 @@ jobs:
     steps:
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: test1
+        run: echo "${{ github.ref }}"
 
       - name: Configure git 📦
         run: |
@@ -74,14 +79,14 @@ jobs:
         uses: ad-m/github-push-action@v0.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref_name }}
+          branch: ${{ github.ref }}
           force: false
           force_with_lease: false
 
       - name: Create maven release tag ${{ fromJSON(steps.release.outputs.result).current-version }} 📤
         uses: ad-m/github-push-action@v0.8.0
         with:
-          branch: ${{ github.ref_name }}
+          branch: ${{ github.ref }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tags: true
           force: false
