@@ -65,7 +65,7 @@ jobs:
       # Commit the changes
       # Build and deploy the release from the local tag
       - name: test on ${{ steps.branch.outputs.current_branch }}
-        run:
+        run: |
           git branch
           git checkout ${{ steps.branch.outputs.current_branch }}
         
