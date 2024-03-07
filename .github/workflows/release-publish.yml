@@ -85,6 +85,6 @@ jobs:
       - name: Tag Github Release
         uses: google-github-actions/release-please-action@v4
         with:
-          release-type: java
+          release-type: simple
           skip-github-pull-request: true
 
