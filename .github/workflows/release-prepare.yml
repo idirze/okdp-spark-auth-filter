@@ -27,10 +27,18 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository_owner == 'idirze' && contains(github.event.pull_request.labels.*.name, 'maven-release')
     steps:
+      - name: Get current branch 📦
+        id: branch
+        uses: tj-actions/branch-names@v8
+
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
         with:
+          ref: ${{ steps.branch.outputs.current_branch }}
           fetch-depth: 0
+
+      - name: test on ${{ steps.branch.outputs.current_branch }} and ${{ steps.branch.outputs.default_branch }}
+        run: git branch
 
       - uses: ./.github/actions/setup-git-bot
 
@@ -39,11 +47,6 @@ jobs:
         uses: mikefarah/yq@v4.42.1
         with:
           cmd: yq -oj e '.release' .github/release.yml
-
-      - name: Get current branch 📦
-        id: branch
-        uses: tj-actions/branch-names@v8
-        
 
       - name: Set up JDK 11 📦
         uses: actions/setup-java@v4
@@ -64,11 +67,6 @@ jobs:
       # Increase the pom project version to 'next-version'
       # Commit the changes
       # Build and deploy the release from the local tag
-      - name: test on ${{ steps.branch.outputs.current_branch }}
-        run: |
-          git branch
-          git checkout ${{ steps.branch.outputs.current_branch }}
-        
       - name: Maven release prepare ${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }} 📤
         run: |
           mvn -ntp --batch-mode release:clean release:prepare \
@@ -81,23 +79,23 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Git Merge '${{ steps.branch.outputs.current_branch }}' into 'main' 📦
+      - name: Git rebase '${{ steps.branch.outputs.current_branch }}' into ${{ steps.branch.outputs.default_branch }} 📦
         run: |
-           git checkout main
-           git merge --commit --no-ff ${{ steps.branch.outputs.current_branch }}
+          git checkout ${{ steps.branch.outputs.default_branch }}
+          git rebase ${{ steps.branch.outputs.current_branch }}
 
-      # Create PR based on the un-pushed commits
-      - name: Create Pull Request for next development iteration 📦
+      # Update the current release PR
+      - name: Update Pull Request for maven publish and next development iteration 📦
         uses: peter-evans/create-pull-request@v6
         with:
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          base: main
+          base: ${{ steps.branch.outputs.default_branch }}
           branch: ${{ steps.branch.outputs.current_branch }}
           #branch-suffix: random
           delete-branch: false
           title: '[maven-release-plugin] Maven release'
           body: |
-            Maven release
+            Maven release:
             - Prepare release ${{ fromJSON(steps.release.outputs.result).current-version }}
             - Publish to [Maven central repository][1]
             - Prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}
@@ -106,3 +104,4 @@ jobs:
           #team-reviewers: reviewers
           labels: |
             maven-release
+            maven-central

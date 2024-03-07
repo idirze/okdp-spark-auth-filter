@@ -28,6 +28,8 @@ jobs:
     steps:
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
+        with:
+          fetch-tags: true
 
       - uses: ./.github/actions/setup-git-bot
 
@@ -57,7 +59,6 @@ jobs:
 
       - name: Deploy to maven central 📤
         run: |
-          git fetch --all --tags
           git checkout tags/v${{ fromJSON(steps.release.outputs.result).current-version }}
           mvn clean deploy -Prelease -DskipTests
         env:
