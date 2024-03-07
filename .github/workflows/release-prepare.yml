@@ -37,7 +37,8 @@ jobs:
           ref: ${{ steps.branch.outputs.current_branch }}
           fetch-depth: 0
 
-      - uses: ./.github/actions/setup-git-bot
+      - name: Set up GitHub Actions git bot
+        uses: ./.github/actions/setup-git-bot
 
       - name: Retrieve release metadata 📦
         id: release
@@ -76,22 +77,15 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Git rebase '${{ steps.branch.outputs.current_branch }}' into ${{ steps.branch.outputs.default_branch }} 📦
-        run: |
-          git checkout ${{ steps.branch.outputs.default_branch }}
-          git rebase ${{ steps.branch.outputs.current_branch }}
+      #- name: Git rebase '${{ steps.branch.outputs.current_branch }}' into ${{ steps.branch.outputs.default_branch }} 📦
+      #  run: |
+      #    git checkout ${{ steps.branch.outputs.default_branch }}
+      #    git rebase ${{ steps.branch.outputs.current_branch }}
 
-      # Update the current release PR
-      - name: Update Pull Request for maven publish and next development iteration 📦
-        uses: peter-evans/create-pull-request@v6
+      - name: Comment Pull Request for maven publish and next development iteration 📦
+        uses: thollander/actions-comment-pull-request@v2
         with:
-          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          base: ${{ steps.branch.outputs.default_branch }}
-          branch: ${{ steps.branch.outputs.current_branch }}
-          #branch-suffix: random
-          delete-branch: false
-          title: '[maven-release-plugin] Maven release'
-          body: |
+          message: |
             Maven release:
             - Prepare release v${{ fromJSON(steps.release.outputs.result).current-version }} (see below the list of changes)
             - Create release tag [v${{ fromJSON(steps.release.outputs.result).current-version }}][2]
@@ -100,7 +94,4 @@ jobs:
             
             [1]: https://central.sonatype.com/artifact/io.okdp/okdp-spark-auth-filter/overview
             [2]: https://github.com/okdp/okdp-spark-auth-filter/tree/v${{ fromJSON(steps.release.outputs.result).current-version }}
-          #team-reviewers: reviewers
-          labels: |
-            maven-release
-            maven-central
+

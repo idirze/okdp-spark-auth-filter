@@ -1,5 +1,5 @@
 # https://github.com/orgs/community/discussions/26560
-name: Set up GitHub Actions bot
+name: Set up GitHub Actions git bot
 description: Configure local git to push as GitHub Actions bot
 
 runs:

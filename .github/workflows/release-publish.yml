@@ -33,7 +33,8 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - uses: ./.github/actions/setup-git-bot
+      - name: Set up GitHub Actions git bot
+        uses: ./.github/actions/setup-git-bot
 
       - name: Retrieve release metadata 📦
         id: release
