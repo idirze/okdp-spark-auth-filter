@@ -64,11 +64,6 @@ jobs:
       # Increase the pom project version to 'next-version'
       # Commit the changes
       # Build and deploy the release from the local tag
-      - name: test on ${{ steps.branch.outputs.current_branch }}
-        run: |
-          git branch
-          git checkout ${{ steps.branch.outputs.current_branch }}
-        
       - name: Maven release prepare ${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }} 📤
         run: |
           mvn -ntp --batch-mode release:clean release:prepare \
