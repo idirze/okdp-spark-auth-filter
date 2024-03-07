@@ -76,10 +76,10 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Git Merge '${{ steps.branch.outputs.current_branch }}' into 'main' 📦
-        run: |
-           git checkout main
-           git merge --commit --no-ff ${{ steps.branch.outputs.current_branch }}
+      #- name: Git Merge '${{ steps.branch.outputs.current_branch }}' into 'main' 📦
+      #  run: |
+      #     git checkout main
+      #     git merge --commit --no-ff ${{ steps.branch.outputs.current_branch }}
 
       # Create PR based on the un-pushed commits
       - name: Create Pull Request for next development iteration 📦
