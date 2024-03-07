@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.github.idirze</groupId>
-  <artifactId>kdp-spark-auth-filter</artifactId>
+  <artifactId>okdp-spark-auth-filter</artifactId>
   <version>0.0.2-SNAPSHOT</version>
   <!-- <groupId>io.okdp</groupId>-->
   <!-- <artifactId>okdp-spark-auth-filter</artifactId>-->
