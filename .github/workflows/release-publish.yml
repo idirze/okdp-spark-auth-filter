@@ -12,10 +12,6 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  actions: write
-  deployments: write
-  packages: write
-  repository-projects: write
 
 # https://docs.github.com/en/actions/using-jobs/using-concurrency
 concurrency:
@@ -60,25 +56,11 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Set Github Release version
-        run: |
-          git commit --allow-empty -m "chore: release ${{ fromJSON(steps.release.outputs.result).current-version }}" \
-                                   -m "Release-As: ${{ fromJSON(steps.release.outputs.result).current-version }}"
-
-      - name: Create Github Release PR
-        uses: google-github-actions/release-please-action@v4
-        with:
-          release-type: java
-          token: ${{ secrets.GITHUB_TOKEN }}
-          monorepo-tags: true
-          command: release-pr
-
       - name: Tag Github Release
         uses: google-github-actions/release-please-action@v4
         with:
           release-type: java
           token: ${{ secrets.GITHUB_TOKEN }}
-          monorepo-tags: true
           command: github-release
 
       - name: Deploy to maven central 📤
