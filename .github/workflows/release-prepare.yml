@@ -37,9 +37,6 @@ jobs:
           ref: ${{ steps.branch.outputs.current_branch }}
           fetch-depth: 0
 
-      - name: test on ${{ steps.branch.outputs.current_branch }} and ${{ steps.branch.outputs.default_branch }}
-        run: git branch
-
       - uses: ./.github/actions/setup-git-bot
 
       - name: Retrieve release metadata 📦
