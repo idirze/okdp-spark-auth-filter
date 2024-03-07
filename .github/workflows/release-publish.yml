@@ -85,6 +85,9 @@ jobs:
       - name: Tag Github Release
         uses: google-github-actions/release-please-action@v4
         with:
-          release-type: simple
+          release-type: java
           skip-github-pull-request: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          monorepo-tags: true
+          command: github-release
 
