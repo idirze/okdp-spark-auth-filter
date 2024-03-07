@@ -72,16 +72,6 @@ jobs:
             [1]: https://central.sonatype.com/artifact/io.okdp/okdp-spark-auth-filter/overview
             [2]: https://github.com/okdp/okdp-spark-auth-filter/tree/v${{ fromJSON(steps.release.outputs.result).current-version }}
 
-      - name: Set Github Release version
-        run: |
-          git commit --allow-empty -m "chore: release ${{ fromJSON(steps.release.outputs.result).current-version }}" \
-                                   -m "Release-As: ${{ fromJSON(steps.release.outputs.result).current-version }}"
-
-      - name: Create Github Release PR
-        uses: google-github-actions/release-please-action@v4
-        with:
-          release-type: java
-
       # Change the pom project version to 'current-version'
       # Run the validations (tests, checkstyle etc.)
       # Commit (PR: The push is disabled including pushing tags -> pushChanges = false)
@@ -99,3 +89,33 @@ jobs:
           CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  prepare-github-release:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'idirze' && contains(github.event.pull_request.labels.*.name, 'maven-release')
+    steps:
+      - name: Get current branch 📦
+        id: branch
+        uses: tj-actions/branch-names@v8
+
+      - name: Checkout Repo ⚡️
+        uses: actions/checkout@v4
+
+      - name: Set up GitHub Actions git bot
+        uses: ./.github/actions/setup-git-bot
+
+      - name: Retrieve release metadata 📦
+        id: release
+        uses: mikefarah/yq@v4.42.1
+        with:
+          cmd: yq -oj e '.release' .github/release.yml
+
+      - name: Set Github Release version
+        run: |
+          git commit --allow-empty -m "chore: release ${{ fromJSON(steps.release.outputs.result).current-version }}" \
+                                   -m "Release-As: ${{ fromJSON(steps.release.outputs.result).current-version }}"
+
+      - name: Create Github Release PR
+        uses: google-github-actions/release-please-action@v4
+        with:
+          release-type: java
