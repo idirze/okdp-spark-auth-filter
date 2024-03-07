@@ -59,7 +59,7 @@ jobs:
         run: |
           git fetch --all --tags
           git checkout tags/v${{ fromJSON(steps.release.outputs.result).current-version }}
-          mvn clean deploy
+          mvn clean deploy -Prelease -DskipTests
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
