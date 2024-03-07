@@ -43,6 +43,7 @@ jobs:
           cmd: yq -oj e '.release' .github/release.yml
 
       - name: Get current branch 📦
+        id: branch
         uses: tj-actions/branch-names@v8
 
       - name: Set up JDK 11 📦
@@ -75,18 +76,17 @@ jobs:
           CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
 
-      # Update release.yml
-      #- name: Merge ${{ steps.branch.outputs.current_branch }} into ${{ github.base_ref }} 📦
-      - name: Merge ${{ env.CURRENT_BRANCH }} into ${{ env.DEFAULT_BRANCH }} 📦
+      - name: Merge ${CURRENT_BRANCH} into ${DEFAULT_BRANCH} 📦
         run: |
-         #git checkout main
-         #git merge --commit --no-ff release         
-         git checkout ${{ env.DEFAULT_BRANCH }}
-         git merge --commit --no-ff ${{ env.CURRENT_BRANCH }}
-
-      - name: Test ${{ steps.branch.outputs.current_branch }} into ${{ github.base_ref }}
-        run: echo "${{ steps.branch.outputs }}"
+           #git checkout main
+           #git merge --commit --no-ff release         
+           git checkout ${DEFAULT_BRANCH}
+           git merge --commit --no-ff ${CURRENT_BRANCH}
 
       # Create PR based on the un-pushed commits
       - name: Create Pull Request for next development iteration 📦
