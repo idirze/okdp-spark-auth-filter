@@ -3,6 +3,8 @@ name: Release [prepare]
 on:
   pull_request:
     types: [labeled]
+    branches:
+      - main
     paths:
       - '.github/release.yml'
 
@@ -59,19 +61,6 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Comment Pull Request for maven publish and next development iteration 📦
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: |
-            Maven release:
-            - Prepare release v${{ fromJSON(steps.release.outputs.result).current-version }} (see below the list of changes)
-            - Create release tag [v${{ fromJSON(steps.release.outputs.result).current-version }}][2]
-            - Publish to [Maven central repository][1]
-            - Prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}
-            
-            [1]: https://central.sonatype.com/artifact/io.okdp/okdp-spark-auth-filter/overview
-            [2]: https://github.com/okdp/okdp-spark-auth-filter/tree/v${{ fromJSON(steps.release.outputs.result).current-version }}
-
       # Change the pom project version to 'current-version'
       # Run the validations (tests, checkstyle etc.)
       # Commit (PR: The push is disabled including pushing tags -> pushChanges = false)
@@ -90,6 +79,23 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
-
+      - name: Set Github Release version
+        run: |
+          git commit --allow-empty -m "chore: release ${{ fromJSON(steps.release.outputs.result).current-version }}" \
+                                   -m "Release-As: ${{ fromJSON(steps.release.outputs.result).current-version }}"
+          
+          git push -u origin ${{ steps.branch.outputs.current_branch }}
+          
+      - name: Comment Pull Request for maven publish and next development iteration 📦
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Maven release:
+            - Prepare release v${{ fromJSON(steps.release.outputs.result).current-version }} (see below the list of changes)
+            - Create release tag [v${{ fromJSON(steps.release.outputs.result).current-version }}][2]
+            - Publish to [Maven central repository][1]
+            - Prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}
+            
+            [1]: https://central.sonatype.com/artifact/io.okdp/okdp-spark-auth-filter/overview
+            [2]: https://github.com/okdp/okdp-spark-auth-filter/tree/v${{ fromJSON(steps.release.outputs.result).current-version }}
 
