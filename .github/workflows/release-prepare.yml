@@ -3,6 +3,8 @@ name: Release [prepare]
 on:
   pull_request:
     types: [labeled]
+    branches:
+      - main
     paths:
       - '.github/release.yml'
 
@@ -90,6 +92,13 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set Github Release version
+        run: |
+          git commit --allow-empty -m "chore: release v${{ fromJSON(steps.release.outputs.result).current-version }}" \
+                                   -m "Release-As: v${{ fromJSON(steps.release.outputs.result).current-version }}"
 
-
+      - name: Push maven release:prepare changes to ${{ steps.branch.outputs.current_branch }}
+        run: |
+          git pull --rebase
+          git push -u origin ${{ steps.branch.outputs.current_branch }}
 
