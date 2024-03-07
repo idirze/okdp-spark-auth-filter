@@ -96,7 +96,7 @@ jobs:
           title: '[maven-release-plugin] Maven release'
           body: |
             Maven release:
-            - Prepare release ${{ fromJSON(steps.release.outputs.result).current-version }}
+            - Prepare release ${{ fromJSON(steps.release.outputs.result).current-version }} (see below the list of changes)
             - Publish to [Maven central repository][1]
             - Prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}
             
