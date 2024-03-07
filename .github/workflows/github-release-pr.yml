@@ -22,7 +22,7 @@ defaults:
     shell: bash
 
 jobs:
-  publish-maven-central:
+  github-release-pr:
     runs-on: ubuntu-latest
     if: github.repository_owner == 'idirze' && github.event.pull_request.merged == true
     steps:
