@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 # https://docs.github.com/en/actions/using-jobs/using-concurrency
 concurrency:
