@@ -1,0 +1,16 @@
+{
+  "extra-files": [
+    "README.md",
+    "pom.xml"
+  ],
+  "packages": {
+    ".": {
+      "changelog-path": "CHANGELOG.md",
+      "release-type": "java",
+      "skip-snapshot": false,
+      "initial-version": "0.0.1-SNAPSHOT"
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}
+
