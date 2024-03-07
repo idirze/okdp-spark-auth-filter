@@ -81,7 +81,7 @@ jobs:
         uses: google-github-actions/release-please-action@v4
         with:
           release-type: java
-          skip-github-pull-request: false
+          skip-github-release: true
 
       # Change the pom project version to 'current-version'
       # Run the validations (tests, checkstyle etc.)
