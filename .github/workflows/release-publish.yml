@@ -66,7 +66,7 @@ jobs:
 
   publish-github-release:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'idirze' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'maven-release')
+    if: github.repository_owner == 'idirze' && github.event.pull_request.merged == true
     steps:
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
@@ -79,6 +79,6 @@ jobs:
 
       - uses: google-github-actions/release-please-action@v4
         with:
-          release-type: simple
+          release-type: java
           #skip-github-pull-request: true
 
