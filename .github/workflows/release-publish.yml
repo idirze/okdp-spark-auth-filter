@@ -25,6 +25,7 @@ jobs:
   publish-release:
     runs-on: ubuntu-latest
     #if: github.event.label.name == 'maven-release' && github.repository_owner == 'idirze'
+    # if: contains(github.event.pull_request.labels.*.name, 'maven-release')
     steps:
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
@@ -34,8 +35,10 @@ jobs:
           git config --local user.email "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           git config --local user.name "github-actions[bot]"
 
-      - name: Test ${{ github.event.label.name }} ${{ github.repository_owner }}
-        run: echo "Hello Test"
+      - name: Test labels
+        run: |
+          echo ":1: ${{ github.event.pull_request.labels }}"
+          echo ":2: ${{ github.event.pull_request.labels.*.name }}"
 
       - name: Retrieve release metadata 📦
         id: release
@@ -58,6 +61,6 @@ jobs:
 
       - name: Deploy to maven central 📤
         run: |
-          git checkout tags/${{ fromJSON(steps.release.outputs.result).current-version }}
+          git checkout tags/v${{ fromJSON(steps.release.outputs.result).current-version }}
           mvn clean deploy
         
