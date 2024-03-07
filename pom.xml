@@ -19,7 +19,7 @@
 
   <groupId>io.github.idirze</groupId>
   <artifactId>kdp-spark-auth-filter</artifactId>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.3-RC1</version>
   <!-- <groupId>io.okdp</groupId>-->
   <!-- <artifactId>okdp-spark-auth-filter</artifactId>-->
   <!--<version>1.0.0</version>-->
