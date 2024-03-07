@@ -93,13 +93,13 @@ jobs:
           title: '[maven-release-plugin] Maven release'
           body: |
             Maven release:
-            - Prepare release ${{ fromJSON(steps.release.outputs.result).current-version }} (see below the list of changes)
-            - Create release tag [][2]
+            - Prepare release v${{ fromJSON(steps.release.outputs.result).current-version }} (see below the list of changes)
+            - Create release tag [v${{ fromJSON(steps.release.outputs.result).current-version }}][2]
             - Publish to [Maven central repository][1]
             - Prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}
             
             [1]: https://central.sonatype.com/artifact/io.okdp/okdp-spark-auth-filter/overview
-            [2]: https://central.sonatype.com/artifact/io.okdp/okdp-spark-auth-filter/overview
+            [2]: https://github.com/okdp/okdp-spark-auth-filter/tree/v${{ fromJSON(steps.release.outputs.result).current-version }}
           #team-reviewers: reviewers
           labels: |
             maven-release
