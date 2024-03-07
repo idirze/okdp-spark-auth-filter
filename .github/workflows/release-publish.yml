@@ -29,10 +29,7 @@ jobs:
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
 
-      - name: Configure git 📦
-        run: |
-          git config --local user.email "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
-          git config --local user.name "github-actions[bot]"
+      - uses: ./.github/actions/setup-git-bot
 
       - name: Test labels
         run: |
@@ -63,4 +60,9 @@ jobs:
           git fetch --all --tags
           git checkout tags/v${{ fromJSON(steps.release.outputs.result).current-version }}
           mvn clean deploy
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
         
