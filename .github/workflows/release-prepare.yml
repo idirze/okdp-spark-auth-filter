@@ -59,39 +59,20 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      # Change the pom project version to 'current-version'
-      # Run the validations (tests, checkstyle etc.)
-      # Commit (PR: The push is disabled including pushing tags -> pushChanges = false)
-      # Increase the pom project version to 'next-version'
-      # Commit the changes
-      # Build and deploy the release from the local tag
-      - name: Maven release prepare ${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }} 📤
-        run: |
-          mvn -ntp --batch-mode release:clean release:prepare \
-             -DreleaseVersion=${{ fromJSON(steps.release.outputs.result).current-version }} \
-             -DdevelopmentVersion=${{ fromJSON(steps.release.outputs.result).next-version }} \
-             -Darguments='-Dpassword=${GIT_TOKEN}'
-        env:
-          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
-          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      #- name: Git rebase '${{ steps.branch.outputs.current_branch }}' into ${{ steps.branch.outputs.default_branch }} 📦
-      #  run: |
-      #    git checkout ${{ steps.branch.outputs.default_branch }}
-      #    git rebase ${{ steps.branch.outputs.current_branch }}
-
       - name: Comment Pull Request for maven publish and next development iteration 📦
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
             Maven release:
             - Prepare release v${{ fromJSON(steps.release.outputs.result).current-version }} (see below the list of changes)
-            - Create release tag [v${{ fromJSON(steps.release.outputs.result).current-version }}][2]
+            - Create new release tag [v${{ fromJSON(steps.release.outputs.result).current-version }}][2]
             - Publish to [Maven central repository][1]
             - Prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}
             
             [1]: https://central.sonatype.com/artifact/io.okdp/okdp-spark-auth-filter/overview
             [2]: https://github.com/okdp/okdp-spark-auth-filter/tree/v${{ fromJSON(steps.release.outputs.result).current-version }}
+
+
+
+
 

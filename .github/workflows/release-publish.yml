@@ -27,9 +27,14 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository_owner == 'idirze' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'maven-release')
     steps:
+      - name: Get current branch 📦
+        id: branch
+        uses: tj-actions/branch-names@v8
+
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
         with:
+          ref: ${{ steps.branch.outputs.current_branch }}
           fetch-depth: 0
           fetch-tags: true
 
@@ -54,6 +59,24 @@ jobs:
           server-password: CENTRAL_TOKEN
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
+
+      # Change the pom project version to 'current-version'
+      # Run the validations (tests, checkstyle etc.)
+      # Commit (PR: The push is disabled including pushing tags -> pushChanges = false)
+      # Increase the pom project version to 'next-version'
+      # Commit the changes
+      # Build and deploy the release from the local tag
+      - name: Maven release prepare ${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }} 📤
+        run: |
+          mvn -ntp --batch-mode release:clean release:prepare \
+             -DreleaseVersion=${{ fromJSON(steps.release.outputs.result).current-version }} \
+             -DdevelopmentVersion=${{ fromJSON(steps.release.outputs.result).next-version }} \
+             -Darguments='-Dpassword=${GIT_TOKEN}'
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to maven central 📤
         run: |
