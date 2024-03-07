@@ -24,7 +24,7 @@ defaults:
 jobs:
   publish-release:
     runs-on: ubuntu-latest
-    if: github.event.label.name == 'maven-release' && github.repository_owner == 'idirze'
+    #if: github.event.label.name == 'maven-release' && github.repository_owner == 'idirze'
     steps:
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
@@ -33,6 +33,9 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           git config --local user.name "github-actions[bot]"
+
+      - name: Test ${{ github.event.label.name }} ${{ github.repository_owner }}
+        run: echo "Hello Test"
 
       - name: Retrieve release metadata 📦
         id: release
