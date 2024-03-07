@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 # https://docs.github.com/en/actions/using-jobs/using-concurrency
 concurrency:
@@ -23,7 +24,7 @@ defaults:
     shell: bash
 
 jobs:
-  publish-release:
+  publish-maven-central:
     runs-on: ubuntu-latest
     if: github.repository_owner == 'idirze' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'maven-release')
     steps:
@@ -33,7 +34,7 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Set up GitHub Actions git bot
+      - name: Set up GitHub Actions git bot 📦
         uses: ./.github/actions/setup-git-bot
 
       - name: Retrieve release metadata 📦
@@ -64,4 +65,21 @@ jobs:
           CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
-        
+  publish-github-release:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'idirze' && github.event.pull_request.merged == true
+    steps:
+      - name: Checkout Repo ⚡️
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up GitHub Actions git bot 📦
+        uses: ./.github/actions/setup-git-bot
+
+      - uses: google-github-actions/release-please-action@v4
+        with:
+          release-type: java
+          #skip-github-pull-request: true
+
