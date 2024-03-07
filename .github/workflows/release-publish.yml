@@ -67,7 +67,7 @@ jobs:
 
   publish-github-release:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'idirze' && github.event.pull_request.merged == true
+    if: github.repository_owner == 'idirze' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'maven-release')
     steps:
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
@@ -78,8 +78,9 @@ jobs:
       - name: Set up GitHub Actions git bot 📦
         uses: ./.github/actions/setup-git-bot
 
-      - uses: google-github-actions/release-please-action@v4
+      - name: Tag Github Release
+        uses: google-github-actions/release-please-action@v4
         with:
           release-type: java
-          #skip-github-pull-request: true
+          skip-github-pull-request: true
 
