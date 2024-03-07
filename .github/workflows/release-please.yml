@@ -6,11 +6,10 @@ on:
       - closed
     branches:
       - main
-    paths:
-      - '.github/release.yml'
 
 permissions:
   contents: write
+  pull-requests: write
 
 # https://docs.github.com/en/actions/using-jobs/using-concurrency
 concurrency:
@@ -23,17 +22,31 @@ defaults:
     shell: bash
 
 jobs:
-  publish-release:
+  release-please:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'idirze' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'maven-release')
+    if: github.repository_owner == 'idirze'
     steps:
+      - uses: google-github-actions/release-please-action@v4
+        id: release-please
+        with:
+          release-type: simple
+
+  publish-maven-central:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'idirze' && needs.release-please.outputs.release_created
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        id: release-please
+        with:
+          release-type: simple
+
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Set up GitHub Actions git bot
+      - name: Set up GitHub Actions git bot 📦
         uses: ./.github/actions/setup-git-bot
 
       - name: Retrieve release metadata 📦
@@ -55,7 +68,17 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Deploy to maven central 📤
+      #  - name: Set Github Release version
+      #    run: |
+      #      git commit --allow-empty -m "chore: release v${{ fromJSON(steps.release.outputs.result).current-version }}" \
+      #                               -m "Release-As: v${{ fromJSON(steps.release.outputs.result).current-version }}"
+
+      #      - name: Push maven release:prepare changes to ${{ steps.branch.outputs.current_branch }}
+      #        run: |
+      #          git pull --rebase
+      #          git push -u origin ${{ steps.branch.outputs.current_branch }}
+
+      - name: Publish to maven central 📤
         run: |
           git checkout tags/v${{ fromJSON(steps.release.outputs.result).current-version }}
           mvn clean deploy -Prelease -DskipTests
@@ -64,4 +87,7 @@ jobs:
           CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
-        
+
+
+
+
