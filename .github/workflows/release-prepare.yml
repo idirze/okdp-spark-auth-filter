@@ -2,9 +2,10 @@ name: Release [prepare]
 
 on:
   pull_request:
-    types: [labeled]
-    paths:
-      - '.github/release.yml'
+    types:
+      - closed
+    branches:
+      - main
 
   workflow_dispatch:
 
@@ -25,7 +26,7 @@ defaults:
 jobs:
   prepare-release:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'idirze' && contains(github.event.pull_request.labels.*.name, 'maven-release')
+    if: github.repository_owner == 'idirze' && github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'maven-release')
     steps:
       - name: Get current branch 📦
         id: branch
@@ -46,50 +47,19 @@ jobs:
         with:
           cmd: yq -oj e '.release' .github/release.yml
 
-      - name: Set up JDK 11 📦
-        uses: actions/setup-java@v4
+    #  - name: Set Github Release version
+    #    run: |
+    #      git commit --allow-empty -m "chore: release v${{ fromJSON(steps.release.outputs.result).current-version }}" \
+    #                               -m "Release-As: v${{ fromJSON(steps.release.outputs.result).current-version }}"
+
+#      - name: Push maven release:prepare changes to ${{ steps.branch.outputs.current_branch }}
+#        run: |
+#          git pull --rebase
+#          git push -u origin ${{ steps.branch.outputs.current_branch }}
+
+      - name: Create Github Release pr
+        uses: google-github-actions/release-please-action@v4
         with:
-          distribution: 'zulu'
-          java-version: '11'
-          cache: 'maven'
-          check-latest: true
-          server-id: 'central'
-          server-username: CENTRAL_USERNAME
-          server-password: CENTRAL_TOKEN
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: GPG_PASSPHRASE
-
-      - name: Comment Pull Request for maven publish and next development iteration 📦
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: |
-            Maven release:
-            - Prepare release v${{ fromJSON(steps.release.outputs.result).current-version }} (see below the list of changes)
-            - Create release tag [v${{ fromJSON(steps.release.outputs.result).current-version }}][2]
-            - Publish to [Maven central repository][1]
-            - Prepare for next development iteration ${{ fromJSON(steps.release.outputs.result).next-version }}
-            
-            [1]: https://central.sonatype.com/artifact/io.okdp/okdp-spark-auth-filter/overview
-            [2]: https://github.com/okdp/okdp-spark-auth-filter/tree/v${{ fromJSON(steps.release.outputs.result).current-version }}
-
-      # Change the pom project version to 'current-version'
-      # Run the validations (tests, checkstyle etc.)
-      # Commit (PR: The push is disabled including pushing tags -> pushChanges = false)
-      # Increase the pom project version to 'next-version'
-      # Commit the changes
-      # Build and deploy the release from the local tag
-      - name: Maven release prepare ${{ fromJSON(steps.release.outputs.result).current-version }} -> ${{ fromJSON(steps.release.outputs.result).next-version }} 📤
-        run: |
-          mvn -ntp --batch-mode release:clean release:prepare \
-             -DreleaseVersion=${{ fromJSON(steps.release.outputs.result).current-version }} \
-             -DdevelopmentVersion=${{ fromJSON(steps.release.outputs.result).next-version }} \
-             -Darguments='-Dpassword=${GIT_TOKEN}'
-        env:
-          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
-          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-
-
+          release-type: maven
+          token: ${{ secrets.GITHUB_TOKEN }}
+          command: github-release
