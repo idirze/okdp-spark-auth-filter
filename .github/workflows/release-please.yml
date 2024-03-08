@@ -6,6 +6,8 @@ on:
       - closed
     branches:
       - main
+    paths-ignore:
+      - "README.md"
 
 permissions:
   contents: write
@@ -32,6 +34,7 @@ jobs:
         id: release-please
         with:
           release-type: simple
+          extra-files: ./pom.xml
 
   publish-maven-central:
     runs-on: ubuntu-latest
