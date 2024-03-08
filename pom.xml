@@ -19,7 +19,7 @@
 
   <groupId>io.github.idirze</groupId>
   <artifactId>okdp-spark-auth-filter</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
   <!-- <groupId>io.okdp</groupId>-->
   <!-- <artifactId>okdp-spark-auth-filter</artifactId>-->
   <!--<version>1.0.0</version>-->
@@ -302,7 +302,7 @@
               <shadedArtifactAttached>false</shadedArtifactAttached>
               <minimizeJar>true</minimizeJar>
               <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
               </transformers>
               <artifactSet>
                 <excludes>
@@ -365,8 +365,8 @@
               -->
               <style>GOOGLE</style>
             </googleJavaFormat>
-            <removeUnusedImports />
-            <formatAnnotations />
+            <removeUnusedImports/>
+            <formatAnnotations/>
             <licenseHeader>
               <file>${project.basedir}/.copyright</file>
             </licenseHeader>
