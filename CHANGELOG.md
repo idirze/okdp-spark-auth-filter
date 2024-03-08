@@ -7,6 +7,13 @@
 
 * release 1.0.3-SNAPSHOT ([29aa037](https://github.com/idirze/okdp-spark-auth-filter/commit/29aa0370224fca24060ace0f8c1e484685cbed07))
 
+## [1.0.3-SNAPSHOT](https://github.com/idirze/okdp-spark-auth-filter/compare/v1.0.0...v1.0.3-SNAPSHOT) (2024-03-08)
+
+
+### Miscellaneous Chores
+
+* release 1.0.3-SNAPSHOT ([29aa037](https://github.com/idirze/okdp-spark-auth-filter/commit/29aa0370224fca24060ace0f8c1e484685cbed07))
+
 ## 1.0.0 (2024-03-08)
 
 
