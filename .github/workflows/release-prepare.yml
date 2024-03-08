@@ -1,0 +1,65 @@
+name: Release [prepare]
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# https://docs.github.com/en/actions/using-jobs/using-concurrency
+concurrency:
+  # Only cancel in-progress jobs or runs for the current workflow - matches against branch & tags
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'idirze' && github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'maven-release')
+    steps:
+      - name: Get current branch 📦
+        id: branch
+        uses: tj-actions/branch-names@v8
+
+      - name: Checkout Repo ⚡️
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.branch.outputs.current_branch }}
+          fetch-depth: 0
+
+      - name: Set up GitHub Actions git bot
+        uses: ./.github/actions/setup-git-bot
+
+      - name: Retrieve release metadata 📦
+        id: release
+        uses: mikefarah/yq@v4.42.1
+        with:
+          cmd: yq -oj e '.release' .github/release.yml
+
+    #  - name: Set Github Release version
+    #    run: |
+    #      git commit --allow-empty -m "chore: release v${{ fromJSON(steps.release.outputs.result).current-version }}" \
+    #                               -m "Release-As: v${{ fromJSON(steps.release.outputs.result).current-version }}"
+
+#      - name: Push maven release:prepare changes to ${{ steps.branch.outputs.current_branch }}
+#        run: |
+#          git pull --rebase
+#          git push -u origin ${{ steps.branch.outputs.current_branch }}
+
+      - name: Create Github Release pr
+        uses: google-github-actions/release-please-action@v4
+        with:
+          release-type: maven
+          token: ${{ secrets.GITHUB_TOKEN }}
+          command: github-release
