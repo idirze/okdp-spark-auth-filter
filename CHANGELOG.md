@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/idirze/okdp-spark-auth-filter/compare/v1.1.0...v1.1.1) (2024-03-08)
+
+
+### Bug Fixes
+
+* some fix2 ([4a3812f](https://github.com/idirze/okdp-spark-auth-filter/commit/4a3812fa600ece901965a3c86303f2638bcb563d))
+
 ## [1.1.0](https://github.com/idirze/okdp-spark-auth-filter/compare/v1.0.0-SNAPSHOT...v1.1.0) (2024-03-08)
 
 
