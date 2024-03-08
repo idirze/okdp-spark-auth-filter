@@ -8,7 +8,7 @@
       "changelog-path": "CHANGELOG.md",
       "release-type": "java",
       "bump-minor-pre-major": false,
-      "bump-patch-for-minor-pre-major": false,
+      "bump-patch-for-minor-pre-major": true,
       "draft": false,
       "prerelease": false,
       "initial-version": "1.0.0-SNAPSHOT",
