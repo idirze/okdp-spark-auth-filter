@@ -1,0 +1,79 @@
+name: Release [publish]
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# https://docs.github.com/en/actions/using-jobs/using-concurrency
+concurrency:
+  # Only cancel in-progress jobs or runs for the current workflow - matches against branch & tags
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  publish-maven-central:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'idirze'
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        id: release-please
+        with:
+          release-type: maven
+
+      - name: Checkout Repo ⚡️
+        if: ${{ steps.release-please.outputs.release_created }}
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up GitHub Actions git bot 📦
+        if: ${{ steps.release-please.outputs.release_created }}
+        uses: ./.github/actions/setup-git-bot
+
+      - name: Retrieve release metadata 📦
+        if: ${{ steps.release-please.outputs.release_created }}
+        id: release
+        uses: mikefarah/yq@v4.42.1
+        with:
+          cmd: yq -oj e '.release' .github/release.yml
+
+      - name: Set up JDK 11 📦
+        if: ${{ steps.release-please.outputs.release_created }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+          cache: 'maven'
+          check-latest: true
+          server-id: 'central'
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_TOKEN
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+
+      - name: Deploy to maven central 📤
+        if: ${{ steps.release-please.outputs.release_created }}
+        run: |
+          git checkout tags/v${{ fromJSON(steps.release.outputs.result).current-version }}
+          mvn clean deploy -Prelease -DskipTests
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+
+
+
+
