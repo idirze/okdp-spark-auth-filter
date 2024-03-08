@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.2](https://github.com/idirze/okdp-spark-auth-filter/compare/v1.1.1...v1.1.2) (2024-03-08)
+
+
+### Bug Fixes
+
+* fix CI ([a315909](https://github.com/idirze/okdp-spark-auth-filter/commit/a31590981ce27518efa92b9cf83ff618c3ff89eb))
+* fix de moncef ([6406540](https://github.com/idirze/okdp-spark-auth-filter/commit/64065409b79caf9943009dc154bedec1eb8d036a))
+* some fix 5 ([ef6b492](https://github.com/idirze/okdp-spark-auth-filter/commit/ef6b492f540cbba78ce7ac70cb9d5a7f37041525))
+* some fix 6 ([4fef70f](https://github.com/idirze/okdp-spark-auth-filter/commit/4fef70ff2f7f3aad223b0f73627437d353a2d983))
+
 ## [1.1.1](https://github.com/idirze/okdp-spark-auth-filter/compare/v1.1.0...v1.1.1) (2024-03-08)
 
 
