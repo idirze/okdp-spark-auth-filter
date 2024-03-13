@@ -43,7 +43,7 @@ jobs:
           cache: 'maven'
 
       - name: Codestyle check ✅
-        run: mvn -ntp spotless:check
+        run: mvn -ntp clean spotless:check
 
   test:
     runs-on: ubuntu-latest
