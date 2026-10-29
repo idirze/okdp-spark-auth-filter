@@ -21,7 +21,7 @@ import java.util.Base64;
 /** This interface contains the authentication filter configuration parameters */
 public interface Constants {
 
-  /** OIDC provider issuer url */
+  /** OIDC provider issuer URL */
   String AUTH_ISSUER_URI = "issuer-uri";
 
   /** OIDC provider client id */
