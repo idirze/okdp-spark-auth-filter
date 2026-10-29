@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/idirze/okdp-spark-auth-filter/compare/v1.5.0...v1.5.1) (2026-10-29)
+
+
+### Bug Fixes
+
+* clarify issuer URL javadoc test only ([545bb53](https://github.com/idirze/okdp-spark-auth-filter/commit/545bb53e7a2800a851658c4b96c42981c44b7256))
+
 ## [1.5.0](https://github.com/idirze/okdp-spark-auth-filter/compare/v1.4.3...v1.5.0) (2026-10-29)
 
 
